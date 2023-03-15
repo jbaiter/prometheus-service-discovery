@@ -1,0 +1,13 @@
+[Unit]
+Description=Prometheus Service Discovery
+Requires=network-online.target
+
+[Service]
+Restart=always
+User=prometheus
+EnvironmentFile=/etc/prometheus-sd/prometheus-sd.conf
+ExecStart=/usr/bin/prometheus-sd discover --output "${OUTPUT}"
+TimeoutStopSec=5s
+
+[Install]
+WantedBy=multi-user.target

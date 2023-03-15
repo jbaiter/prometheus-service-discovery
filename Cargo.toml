@@ -1,0 +1,45 @@
+[package]
+name = "prometheus-sd"
+description = '''
+This tool implements Service Discovery for Prometheus via a shared Redis instance.
+Every distributed instance registers itself via the `register` subcommand. The discovery
+then happens on the machine the Prometheus server is running on via the `discover`
+subcommand, which will monitor for changes to the servie registry and write out the
+discovered services to a JSON file, where it can then be picked up by Prometheus'
+[file-based discovery mechanism](https://prometheus.io/docs/guides/file-sd/).
+'''
+version = "0.3.0"
+authors = ["Johannes Baiter <johannes.baiter@gmail.com>"]
+edition = "2018"
+readme = "README.md"
+license = "MIT"
+
+[package.metadata.deb]
+depends = "$auto, systemd"
+priority = "optional"
+license-file = ["LICENSE", "3"]
+extended-description = """This tool implements Service Discovery for Prometheus via a shared Redis instance.
+Every distributed instance registers itself via the `register` subcommand. The discovery
+then happens on the machine the Prometheus server is running on via the `discover`
+subcommand, which will monitor for changes to the service registry and write out the
+discovered services to a JSON file, where it can then be picked up by Prometheus'
+file-based discovery mechanism."""
+
+assets = [
+    ["assets/prometheus-sd.conf", "etc/prometheus-sd/", "755"],
+    ["assets/prometheus-sd.service", "lib/systemd/system/", "644"],
+    ["target/x86_64-unknown-linux-musl/release/prometheus-sd", "usr/bin/", "755"]
+]
+
+[build]
+target = "x86_64-unknown-linux-musl"
+
+[dependencies]
+clap = { version = "3.2.14", features = ["color",  "env"] }
+custom_error = "1.9.2"
+backoff = "0.4.0"
+redis = "0.21.5"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+log = "0.4.0"
+env_logger = "0.9.0"
